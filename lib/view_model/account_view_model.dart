@@ -1,4 +1,4 @@
-import 'package:check_store/database/account.dart';
+import 'package:check_store/data/database/account.dart';
 import 'package:check_store/model/account_state.dart/account_state.dart';
 import 'package:check_store/model/valorant_account/valorant_account.dart';
 import 'package:check_store/repository/valorant_account.dart';

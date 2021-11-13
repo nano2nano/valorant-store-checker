@@ -1,5 +1,6 @@
-import 'package:check_store/database/app_database.dart';
 import 'package:check_store/model/valorant_account/valorant_account.dart';
+
+import 'app_database.dart';
 
 class AccountDatabase extends AppDatabase {
   final String _tableName = 'account';
