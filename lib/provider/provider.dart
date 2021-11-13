@@ -2,7 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuple/tuple.dart';
 
-final dioProvider = Provider<Dio>((ref) => Dio());
+final dioProvider = Provider<Dio>((ref) {
+  final dio = Dio();
+  dio.interceptors.add(LogInterceptor());
+  return dio;
+});
 
 final regionListProvider = Provider<List<Tuple2<String, String>>>(
   (ref) => const [
