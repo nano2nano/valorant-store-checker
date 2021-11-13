@@ -74,7 +74,6 @@ class AccountListItem extends ConsumerWidget {
       child: ListTile(
         title: Text(account.username),
         onTap: () async {
-          print(account);
           ref.read(accountProvider.state).state = account;
           Navigator.push(
             context,
