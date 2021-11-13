@@ -34,25 +34,32 @@ class _StoreView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final weapons = ref.watch(weaponsProvider);
 
-    return ListView.builder(
-      itemCount: weapons.length,
-      itemBuilder: (context, index) {
-        final weapon = weapons[index];
-        return ListTile(
-          title: Stack(
-            children: [
-              Image(
-                image: NetworkImage(weapon.displayIcon),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200.withOpacity(0.5),
+    return RefreshIndicator(
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: weapons.length,
+        itemBuilder: (context, index) {
+          final weapon = weapons[index];
+          return ListTile(
+            title: Stack(
+              children: [
+                Image(
+                  image: NetworkImage(weapon.displayIcon),
                 ),
-                child: Text(weapon.displayName),
-              ),
-            ],
-          ),
-        );
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200.withOpacity(0.5),
+                  ),
+                  child: Text(weapon.displayName),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      onRefresh: () async {
+        final viewModel = ref.watch(storeViewModelProvider.notifier);
+        await viewModel.fetchSingleItemOffers();
       },
     );
   }

@@ -14,16 +14,21 @@ final storeViewModelProvider = StateNotifierProvider<StoreViewModelProvider,
 class StoreViewModelProvider
     extends StateNotifier<AsyncValue<List<WeaponSkinlevel>>> {
   StoreViewModelProvider(this._ref) : super(const AsyncValue.loading()) {
-    fetchSingleItemOffers(_ref.watch(accountProvider));
+    fetchSingleItemOffers();
   }
 
   final Ref _ref;
 
-  Future fetchSingleItemOffers(ValorantAccount? account) async {
+  Future fetchSingleItemOffers() async {
     final _valorantApiRepository = _ref.read(valorantApiRespositoryProvider);
+    final account = _ref.watch(accountProvider);
+    if (account == null) {
+      state = AsyncValue.error(Exception('account provider gave null'));
+      return;
+    }
     try {
       final weapons =
-          await _valorantApiRepository.fetchSingleItemOffers(account!);
+          await _valorantApiRepository.fetchSingleItemOffers(account);
       state = AsyncValue.data(weapons);
     } on AuthenticationFailure {
       state = const AsyncValue.error(AuthenticationFailure);
