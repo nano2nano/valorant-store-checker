@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:check_store/data/remote/valorant_api.dart';
 import 'package:check_store/exception/auth_failure.dart';
 import 'package:check_store/model/weapon_skinlevel/weapon_skinlevel.dart';
@@ -17,22 +19,20 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
 
   @override
   Future<String> fetchAccessToken(ValorantAccount account) async {
-    final manager = CookieManager(CookieJar());
+    final url = 'https://auth.riotgames.com/api/v1/authorization';
+
+    final cookies = await fetchCookies();
+    final cookieJar = CookieJar();
+    cookieJar.saveFromResponse(Uri.parse(url), cookies);
+
+    final manager = CookieManager(cookieJar);
     _dio.interceptors.add(manager);
 
-    final url = 'https://auth.riotgames.com/api/v1/authorization';
-    var data = {
-      'client_id': 'play-valorant-web-prod',
-      'nonce': '1',
-      'redirect_uri': 'https://playvalorant.com/opt_in',
-      'response_type': 'token id_token',
-    };
-    await _dio.post(url, data: data);
-
-    data = {
+    final data = {
       'type': 'auth',
       'username': account.username,
       'password': account.password,
+      'remember': 'true',
     };
 
     final response = await _dio.put(url, data: data);
@@ -117,5 +117,25 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
     );
     final weapon = WeaponSkinlevel.fromJson(response.data['data']);
     return weapon;
+  }
+
+  Future<List<Cookie>> fetchCookies() async {
+    final url = 'https://auth.riotgames.com/api/v1/authorization';
+    final data = {
+      'client_id': 'play-valorant-web-prod',
+      'nonce': '1',
+      'redirect_uri': 'https://playvalorant.com/opt_in',
+      'response_type': 'token id_token'
+    };
+
+    final cookieJar = CookieJar();
+    final manager = CookieManager(cookieJar);
+    _dio.interceptors.add(manager);
+
+    await _dio.post(url, data: data);
+
+    final cookies = await cookieJar.loadForRequest(Uri.parse(url));
+    _dio.interceptors.remove(manager);
+    return cookies;
   }
 }
