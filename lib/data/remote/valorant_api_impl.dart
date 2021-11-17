@@ -19,42 +19,12 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
 
   @override
   Future<String> fetchAccessToken(ValorantAccount account) async {
-    const url = 'https://auth.riotgames.com/api/v1/authorization';
-
-    final cookies = await fetchCookies();
     final cookieJar = CookieJar();
-    cookieJar.saveFromResponse(Uri.parse(url), cookies);
-
     final manager = CookieManager(cookieJar);
-    _dio.interceptors.add(manager);
 
-    final data = {
-      'type': 'auth',
-      'username': account.username,
-      'password': account.password,
-      'remember': 'true',
-    };
+    await fetchCookies(manager);
 
-    final response = await _dio.put(url, data: data);
-    final Map<String, dynamic> res = response.data;
-    if (res.containsKey('error')) {
-      if (res['error'] == 'auth_failure') {
-        throw const AuthenticationFailure('auth_failure');
-      } else {
-        throw Error;
-      }
-    }
-    var match = RegExp(
-      r'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)',
-    ).firstMatch(response.data['response']['parameters']['uri']);
-
-    if (match == null) throw Error;
-    final accessToken = match.group(1);
-    if (accessToken == null) throw Error;
-
-    // reset cookie manager
-    _dio.interceptors.remove(manager);
-    return accessToken;
+    return await auth(manager, account);
   }
 
   @override
@@ -116,7 +86,7 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
     return weapon;
   }
 
-  Future<List<Cookie>> fetchCookies() async {
+  Future<void> fetchCookies(CookieManager manager) async {
     const url = 'https://auth.riotgames.com/api/v1/authorization';
     const data = {
       'client_id': 'play-valorant-web-prod',
@@ -125,14 +95,38 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
       'response_type': 'token id_token'
     };
 
-    final cookieJar = CookieJar();
-    final manager = CookieManager(cookieJar);
     _dio.interceptors.add(manager);
-
     await _dio.post(url, data: data);
-
-    final cookies = await cookieJar.loadForRequest(Uri.parse(url));
     _dio.interceptors.remove(manager);
-    return cookies;
+  }
+
+  Future<String> auth(CookieManager manager, ValorantAccount account) async {
+    const url = 'https://auth.riotgames.com/api/v1/authorization';
+    final data = {
+      'type': 'auth',
+      'username': account.username,
+      'password': account.password,
+      'remember': 'true',
+    };
+
+    _dio.interceptors.add(manager);
+    final response = await _dio.put(url, data: data);
+    _dio.interceptors.remove(manager);
+    final Map<String, dynamic> res = response.data;
+    if (res.containsKey('error')) {
+      if (res['error'] == 'auth_failure') {
+        throw const AuthenticationFailure('auth_failure');
+      } else {
+        throw Error;
+      }
+    }
+    var match = RegExp(
+      r'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)',
+    ).firstMatch(response.data['response']['parameters']['uri']);
+
+    if (match == null) throw Error;
+    final accessToken = match.group(1);
+    if (accessToken == null) throw Error;
+    return accessToken;
   }
 }
