@@ -19,7 +19,7 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
 
   @override
   Future<String> fetchAccessToken(ValorantAccount account) async {
-    final url = 'https://auth.riotgames.com/api/v1/authorization';
+    const url = 'https://auth.riotgames.com/api/v1/authorization';
 
     final cookies = await fetchCookies();
     final cookieJar = CookieJar();
@@ -59,11 +59,9 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
 
   @override
   Future<String> fetchEntitlementsToken(String accessToken) async {
+    const url = 'https://entitlements.auth.riotgames.com/api/token/v1';
     final headers = {'Authorization': 'Bearer $accessToken'};
-    final response = await _dio.post(
-      'https://entitlements.auth.riotgames.com/api/token/v1',
-      options: Options(headers: headers),
-    );
+    final response = await _dio.post(url, options: Options(headers: headers));
     return response.data['entitlements_token'];
   }
 
@@ -111,17 +109,16 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
 
   @override
   Future<WeaponSkinlevel> fetchWeaponSkinLevelByUuid(String uuid) async {
-    final response = await _dio.get(
-      'https://valorant-api.com/v1/weapons/skinlevels/$uuid',
-      queryParameters: {'language': 'ja-JP'},
-    );
+    final url = 'https://valorant-api.com/v1/weapons/skinlevels/$uuid';
+    final response =
+        await _dio.get(url, queryParameters: {'language': 'ja-JP'});
     final weapon = WeaponSkinlevel.fromJson(response.data['data']);
     return weapon;
   }
 
   Future<List<Cookie>> fetchCookies() async {
-    final url = 'https://auth.riotgames.com/api/v1/authorization';
-    final data = {
+    const url = 'https://auth.riotgames.com/api/v1/authorization';
+    const data = {
       'client_id': 'play-valorant-web-prod',
       'nonce': '1',
       'redirect_uri': 'https://playvalorant.com/opt_in',
