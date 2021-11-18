@@ -98,9 +98,9 @@ class _AddAccountView extends ConsumerWidget {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
           Fluttertoast.showToast(msg: '認証に失敗しました');
         });
-      } on Exception {
+      } on Exception catch (e) {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
-          Fluttertoast.showToast(msg: '予期せぬエラー');
+          Fluttertoast.showToast(msg: e.toString());
         });
       }
     };
