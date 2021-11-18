@@ -7,6 +7,8 @@ import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 final valorantApiDataSourceProvider = Provider<ValorantApiDataSource>(
     (ref) => ValorantApiDataSourceImpl(dio: ref.read(dioProvider)));
@@ -17,12 +19,36 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
 
   @override
   Future<String> fetchAccessToken(ValorantAccount account) async {
-    final cookieJar = CookieJar();
+    const url = 'https://auth.riotgames.com/api/v1/authorization';
+    final cookieJar = await getCookieJar(account);
     final manager = CookieManager(cookieJar);
+    final cookies = await cookieJar.loadForRequest(Uri.parse(url));
+    if (cookies.isEmpty) {
+      return await auth(manager, account);
+    } else {
+      return await reauth(manager);
+    }
+  }
 
-    await fetchCookies(manager);
-
-    return await auth(manager, account);
+  Future<CookieJar> getCookieJar(ValorantAccount account) async {
+    final existsAccount = account.id != null;
+    if (existsAccount) {
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final appDocPath = appDocDir.path;
+      final storage = FileStorage(
+        path.join(
+          appDocPath,
+          account.id.toString(),
+          '.cookies',
+        ),
+      );
+      return PersistCookieJar(
+        storage: storage,
+        persistSession: false,
+      );
+    } else {
+      return CookieJar();
+    }
   }
 
   @override
@@ -84,7 +110,7 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
     return weapon;
   }
 
-  Future<void> fetchCookies(CookieManager manager) async {
+  Future<void> setAuthCookies(CookieManager manager) async {
     const url = 'https://auth.riotgames.com/api/v1/authorization';
     const data = {
       'client_id': 'play-valorant-web-prod',
@@ -107,9 +133,12 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
       'remember': 'true',
     };
 
+    await setAuthCookies(manager);
+
     _dio.interceptors.add(manager);
     final response = await _dio.put(url, data: data);
     _dio.interceptors.remove(manager);
+
     final Map<String, dynamic> res = response.data;
     if (res.containsKey('error')) {
       if (res['error'] == 'auth_failure') {
@@ -125,6 +154,27 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
     if (match == null) throw Error;
     final accessToken = match.group(1);
     if (accessToken == null) throw Error;
+    if (accessToken.isEmpty) throw Exception('empty access token');
+    return accessToken;
+  }
+
+  Future<String> reauth(CookieManager manager) async {
+    const url = 'https://auth.riotgames.com/authorize';
+    const data = {
+      'client_id': 'play-valorant-web-prod',
+      'nonce': '1',
+      'redirect_uri': 'https://playvalorant.com/opt_in',
+      'response_type': 'token id_token'
+    };
+
+    _dio.interceptors.add(manager);
+    final response = await _dio.get(
+      url,
+      queryParameters: data,
+      options: Options(followRedirects: true),
+    );
+    _dio.interceptors.remove(manager);
+    final accessToken = response.redirects[0].location.fragment.split('=')[1];
     return accessToken;
   }
 }
