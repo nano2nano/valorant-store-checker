@@ -40,17 +40,24 @@ class _StoreView extends ConsumerWidget {
         itemCount: weapons.length,
         itemBuilder: (context, index) {
           final weapon = weapons[index];
-          return ListTile(
-            title: Stack(
+          return Card(
+            child: Column(
               children: [
+                Container(
+                  width: double.infinity,
+                  child: Text(
+                    weapon.displayName,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 23,
+                    ),
+                  ),
+                ),
                 Image(
                   image: NetworkImage(weapon.displayIcon),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200.withOpacity(0.5),
-                  ),
-                  child: Text(weapon.displayName),
+                  fit: BoxFit.fill,
+                  height: 150,
                 ),
               ],
             ),
