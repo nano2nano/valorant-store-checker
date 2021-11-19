@@ -1,4 +1,3 @@
-import 'package:check_store/exception/auth_failure.dart';
 import 'package:check_store/model/valorant_account/valorant_account.dart';
 import 'package:check_store/model/weapon_skinlevel/weapon_skinlevel.dart';
 import 'package:check_store/repository/valorant_api_repository_impl.dart';
@@ -30,8 +29,6 @@ class StoreViewModelProvider
       final weapons =
           await _valorantApiRepository.fetchSingleItemOffers(account);
       state = AsyncValue.data(weapons);
-    } on AuthenticationFailure {
-      state = const AsyncValue.error(AuthenticationFailure);
     } on Exception catch (e) {
       state = AsyncValue.error(e);
     }
