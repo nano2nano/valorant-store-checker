@@ -133,7 +133,8 @@ class CommonButton extends StatelessWidget {
   }
 }
 
-final selectedRegionProvider = StateProvider.autoDispose<String>((ref) => 'NA');
+final selectedRegionProvider = StateProvider.autoDispose<String>(
+    (ref) => ref.watch(regionListProvider)[0].item2);
 final regionDropdownMenuItemProvider = Provider<List<DropdownMenuItem<String>>>(
   (ref) => ref
       .watch(regionListProvider)
