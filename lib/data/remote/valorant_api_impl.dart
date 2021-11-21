@@ -153,8 +153,7 @@ class ValorantApiDataSourceImpl implements ValorantApiDataSource {
 
     if (match == null) throw Error;
     final accessToken = match.group(1);
-    if (accessToken == null) throw Error;
-    if (accessToken.isEmpty) throw Exception('empty access token');
+    if (accessToken == null || accessToken.isEmpty) throw Error;
     return accessToken;
   }
 
