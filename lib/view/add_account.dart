@@ -2,11 +2,13 @@ import 'package:check_store/exception/auth_failure.dart';
 import 'package:check_store/model/valorant_account/valorant_account.dart';
 import 'package:check_store/provider/provider.dart';
 import 'package:check_store/repository/valorant_api_repository_impl.dart';
+import 'package:check_store/utils.dart';
 import 'package:check_store/view_model/account_view_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final usernameControllerProvider =
     StateProvider.autoDispose<TextEditingController>(
@@ -24,7 +26,7 @@ class AddAccountView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('登録'),
+        title: Text(capitalize(AppLocalizations.of(context)!.register)),
       ),
       body: const _AddAccountView(),
     );
@@ -35,6 +37,9 @@ class _AddAccountView extends ConsumerWidget {
   const _AddAccountView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final usernameText = AppLocalizations.of(context)!.username;
+    final passwordText = AppLocalizations.of(context)!.password;
+
     return Center(
       child: Form(
         child: SingleChildScrollView(
@@ -45,17 +50,17 @@ class _AddAccountView extends ConsumerWidget {
               const SizedBox(height: 24.0),
               TextFormField(
                 controller: ref.watch(usernameControllerProvider),
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Username',
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  labelText: capitalize(usernameText),
                 ),
               ),
               const SizedBox(height: 24.0),
               TextFormField(
                 controller: ref.watch(passwordControllerProvider),
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Password',
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  labelText: capitalize(passwordText),
                 ),
                 obscureText: true,
               ),
@@ -67,7 +72,7 @@ class _AddAccountView extends ConsumerWidget {
                   padding: const EdgeInsets.all(10),
                   child: CommonButton(
                     onPressed: _onPressed(context, ref),
-                    child: const Text('登録'),
+                    child: Text(AppLocalizations.of(context)!.register),
                   ),
                 ),
               ),
@@ -96,7 +101,8 @@ class _AddAccountView extends ConsumerWidget {
         });
       } on AuthenticationFailure {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
-          Fluttertoast.showToast(msg: '認証に失敗しました');
+          Fluttertoast.showToast(
+              msg: AppLocalizations.of(context)!.authentication_failed_message);
         });
       } on Exception catch (e) {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -132,7 +138,8 @@ class CommonButton extends StatelessWidget {
   }
 }
 
-final selectedRegionProvider = StateProvider.autoDispose<String>((ref) => 'NA');
+final selectedRegionProvider = StateProvider.autoDispose<String>(
+    (ref) => ref.watch(regionListProvider)[0].item2);
 final regionDropdownMenuItemProvider = Provider<List<DropdownMenuItem<String>>>(
   (ref) => ref
       .watch(regionListProvider)

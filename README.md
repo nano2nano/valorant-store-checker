@@ -2,6 +2,12 @@
 
 Tool for checking a store on valorant.
 
+## Download
+
+you can download from play store.
+
+https://play.google.com/store/apps/details?id=com.dev2nano.check_store
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
