@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final usernameControllerProvider =
     StateProvider.autoDispose<TextEditingController>(
@@ -24,7 +25,7 @@ class AddAccountView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('登録'),
+        title: Text(AppLocalizations.of(context)!.register),
       ),
       body: const _AddAccountView(),
     );
@@ -67,7 +68,7 @@ class _AddAccountView extends ConsumerWidget {
                   padding: const EdgeInsets.all(10),
                   child: CommonButton(
                     onPressed: _onPressed(context, ref),
-                    child: const Text('登録'),
+                    child: Text(AppLocalizations.of(context)!.register),
                   ),
                 ),
               ),
