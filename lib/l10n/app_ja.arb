@@ -2,5 +2,6 @@
   "@@locale": "ja",
   "register": "登録",
   "user": "ユーザー",
-  "store": "store"
+  "store": "store",
+  "authentication_failed_message": "認証に失敗しました"
 }
