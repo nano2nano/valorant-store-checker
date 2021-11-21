@@ -2,13 +2,13 @@ import 'package:check_store/exception/auth_failure.dart';
 import 'package:check_store/model/valorant_account/valorant_account.dart';
 import 'package:check_store/provider/provider.dart';
 import 'package:check_store/repository/valorant_api_repository_impl.dart';
-import 'package:check_store/utils.dart';
 import 'package:check_store/view_model/account_view_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 final usernameControllerProvider =
     StateProvider.autoDispose<TextEditingController>(
@@ -26,7 +26,9 @@ class AddAccountView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(capitalize(AppLocalizations.of(context)!.register)),
+        title: Text(
+          toBeginningOfSentenceCase(AppLocalizations.of(context)!.register)!,
+        ),
       ),
       body: const _AddAccountView(),
     );
@@ -52,7 +54,7 @@ class _AddAccountView extends ConsumerWidget {
                 controller: ref.watch(usernameControllerProvider),
                 decoration: InputDecoration(
                   border: const UnderlineInputBorder(),
-                  labelText: capitalize(usernameText),
+                  labelText: toBeginningOfSentenceCase(usernameText),
                 ),
               ),
               const SizedBox(height: 24.0),
@@ -60,7 +62,7 @@ class _AddAccountView extends ConsumerWidget {
                 controller: ref.watch(passwordControllerProvider),
                 decoration: InputDecoration(
                   border: const UnderlineInputBorder(),
-                  labelText: capitalize(passwordText),
+                  labelText: toBeginningOfSentenceCase(passwordText),
                 ),
                 obscureText: true,
               ),

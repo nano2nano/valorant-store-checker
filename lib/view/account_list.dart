@@ -1,5 +1,4 @@
 import 'package:check_store/model/valorant_account/valorant_account.dart';
-import 'package:check_store/utils.dart';
 import 'package:check_store/view/store_view.dart';
 import 'package:check_store/view_model/account_view_model.dart';
 import 'package:check_store/view_model/store_view_model.dart';
@@ -7,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class AccountListView extends StatelessWidget {
   const AccountListView({Key? key}) : super(key: key);
@@ -15,7 +15,9 @@ class AccountListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(capitalize(AppLocalizations.of(context)!.user)),
+        title: Text(
+          toBeginningOfSentenceCase(AppLocalizations.of(context)!.user)!,
+        ),
       ),
       body: const AccountList(),
       floatingActionButton: FloatingActionButton(

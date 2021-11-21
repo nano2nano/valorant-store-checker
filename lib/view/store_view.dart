@@ -1,9 +1,9 @@
 import 'package:check_store/model/weapon_skinlevel/weapon_skinlevel.dart';
-import 'package:check_store/utils.dart';
 import 'package:check_store/view_model/store_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class StoreView extends ConsumerWidget {
   const StoreView({Key? key}) : super(key: key);
@@ -22,7 +22,9 @@ class StoreView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(capitalize(AppLocalizations.of(context)!.store)),
+        title: Text(
+          toBeginningOfSentenceCase(AppLocalizations.of(context)!.store)!,
+        ),
       ),
       body: body,
     );
