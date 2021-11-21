@@ -4,6 +4,6 @@
   "user": "ユーザー",
   "username": "ユーザー名",
   "password": "パスワード",
-  "store": "store",
+  "store": "ストア",
   "authentication_failed_message": "認証に失敗しました"
 }
