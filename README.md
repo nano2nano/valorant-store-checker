@@ -1,6 +1,6 @@
-# check_store
+# Valorant Store checker
 
-A new Flutter project.
+Tool for checking a store on valorant.
 
 ## Getting Started
 
