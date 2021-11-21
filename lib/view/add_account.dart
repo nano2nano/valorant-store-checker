@@ -26,7 +26,7 @@ class AddAccountView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.register),
+        title: Text(capitalize(AppLocalizations.of(context)!.register)),
       ),
       body: const _AddAccountView(),
     );

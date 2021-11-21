@@ -1,4 +1,5 @@
 import 'package:check_store/model/valorant_account/valorant_account.dart';
+import 'package:check_store/utils.dart';
 import 'package:check_store/view/store_view.dart';
 import 'package:check_store/view_model/account_view_model.dart';
 import 'package:check_store/view_model/store_view_model.dart';
@@ -13,7 +14,9 @@ class AccountListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.user)),
+      appBar: AppBar(
+        title: Text(capitalize(AppLocalizations.of(context)!.user)),
+      ),
       body: const AccountList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
