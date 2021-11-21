@@ -2,6 +2,7 @@ import 'package:check_store/exception/auth_failure.dart';
 import 'package:check_store/model/valorant_account/valorant_account.dart';
 import 'package:check_store/provider/provider.dart';
 import 'package:check_store/repository/valorant_api_repository_impl.dart';
+import 'package:check_store/utils.dart';
 import 'package:check_store/view_model/account_view_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,9 @@ class _AddAccountView extends ConsumerWidget {
   const _AddAccountView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final usernameText = AppLocalizations.of(context)!.username;
+    final passwordText = AppLocalizations.of(context)!.password;
+
     return Center(
       child: Form(
         child: SingleChildScrollView(
@@ -46,17 +50,17 @@ class _AddAccountView extends ConsumerWidget {
               const SizedBox(height: 24.0),
               TextFormField(
                 controller: ref.watch(usernameControllerProvider),
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Username',
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  labelText: capitalize(usernameText),
                 ),
               ),
               const SizedBox(height: 24.0),
               TextFormField(
                 controller: ref.watch(passwordControllerProvider),
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Password',
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  labelText: capitalize(passwordText),
                 ),
                 obscureText: true,
               ),

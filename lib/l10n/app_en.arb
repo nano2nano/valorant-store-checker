@@ -2,6 +2,8 @@
   "@@locale": "en",
   "register": "register",
   "user": "user",
+  "username": "username",
+  "password": "password",
   "store": "store",
   "authentication_failed_message": "Authentication failed."
 }
