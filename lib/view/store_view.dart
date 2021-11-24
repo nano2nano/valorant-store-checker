@@ -44,36 +44,49 @@ class _StoreView extends ConsumerWidget {
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: weapons.length,
-        itemBuilder: (context, index) {
-          final weapon = weapons[index];
-          return Card(
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  child: Text(
-                    weapon.displayName,
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 23,
-                    ),
-                  ),
-                ),
-                Image(
-                  image: NetworkImage(weapon.displayIcon),
-                  fit: BoxFit.fill,
-                  height: 150,
-                ),
-              ],
-            ),
-          );
-        },
+        itemBuilder: (context, index) => ProviderScope(
+          child: const ListItem(),
+          overrides: [itemProvider.overrideWithValue(weapons[index])],
+        ),
       ),
       onRefresh: () async {
         final viewModel = ref.watch(storeViewModelProvider.notifier);
         await viewModel.fetchSingleItemOffers();
       },
+    );
+  }
+}
+
+final itemProvider =
+    Provider<WeaponSkinlevel>((ref) => throw UnimplementedError());
+
+class ListItem extends ConsumerWidget {
+  const ListItem({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final weapon = ref.watch(itemProvider);
+    return Card(
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            child: Text(
+              weapon.displayName,
+              textAlign: TextAlign.left,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 23,
+              ),
+            ),
+          ),
+          Image(
+            image: NetworkImage(weapon.displayIcon),
+            fit: BoxFit.fill,
+            height: 150,
+          ),
+        ],
+      ),
     );
   }
 }
